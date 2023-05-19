@@ -1,16 +1,19 @@
 package features.manage_books;
 
 import config.Constant;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import utils.DB_Connection;
+import utils.LoadingDialog;
 
 import javax.swing.*;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class Add_Book {
+    private final LoadingDialog loadingDialog;
+
     public Add_Book() {
+        loadingDialog = new LoadingDialog();
         int choice;
         do {
             String title = "Tambah Buku\n\n";
@@ -41,8 +44,9 @@ public class Add_Book {
                 break;
             }
 
-            // add book to JSON file
-            DoAddBook(name, author, published, Integer.parseInt(stock));
+            loadingDialog.showLoading();
+            addBookToDatabase(name, author, published, Integer.parseInt(stock));
+            loadingDialog.hideLoading();
 
             // ask user if they want to add another book
             String AddMore = JOptionPane.showConfirmDialog(null, title + "Tambah buku lagi?", Constant.APP_NAME, JOptionPane.YES_NO_OPTION) + "";
@@ -64,27 +68,20 @@ public class Add_Book {
         }
     }
 
-    public void DoAddBook(String name, String author, String published, int stock) {
-        JSONParser parser = new JSONParser();
-
-        try (FileReader reader = new FileReader(Constant.BOOKS_FILE)) {
-            JSONArray bookArray = (JSONArray) parser.parse(reader);
-
-            JSONObject bookJson = new JSONObject();
-            bookJson.put("id", bookArray.size() + 1); // id is auto-incremented (1, 2, 3, ...
-            bookJson.put("name", name);
-            bookJson.put("author", author);
-            bookJson.put("published", published);
-            bookJson.put("stock", stock);
-            bookArray.add(bookJson);
-
-            // write to JSON file
-            FileWriter file = new FileWriter(Constant.BOOKS_FILE);
-            file.write(bookArray.toJSONString());
-            file.flush();
-            file.close();
-        } catch (Exception e) {
+    private void addBookToDatabase(String name, String author, String published, int stock) {
+        try (Connection connection = DB_Connection.getDataSource().getConnection()) {
+            String query = "INSERT INTO books (name, author, published, stock) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, name);
+                statement.setString(2, author);
+                statement.setString(3, published);
+                statement.setInt(4, stock);
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
+            // Handle any potential exceptions here
+            JOptionPane.showMessageDialog(null, "Failed to add the book.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
         }
     }
 }

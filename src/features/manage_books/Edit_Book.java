@@ -2,20 +2,36 @@ package features.manage_books;
 
 import config.Constant;
 import models.Book;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import utils.DB_Connection;
+import utils.LoadingDialog;
 
 import javax.swing.*;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Edit_Book {
     public Edit_Book() {
-        // load list of books from JSON file
+        // show loading state
+        LoadingDialog loadingDialog = new LoadingDialog();
+        loadingDialog.showLoading();
+
+        // load list of books from the database
         List<Book> bookList = loadData();
+
+        // hide loading state
+        loadingDialog.hideLoading();
+
+        if (bookList == null) {
+            // Handle the case where loading failed
+            JOptionPane.showMessageDialog(null, "Failed to load the books.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+            new Book_Management_Menu();
+            return;
+        }
+
         boolean continueEditing = true; // Flag to control the loop
 
         while (continueEditing) {
@@ -24,7 +40,7 @@ public class Edit_Book {
 
             // display list of books
             for (int i = 0; i < bookList.size(); i++) {
-                content += (i + 1) + ". " + bookList.get(i) + "\n";
+                content += bookList.get(i).getId() + ". " + bookList.get(i).getName() + "\n";
             }
             content += "\n";
 
@@ -60,8 +76,14 @@ public class Edit_Book {
                 continue;
             }
 
+            // show loading state
+            loadingDialog.showLoading();
+
             // edit book
-            doEditBook(bookName, bookIndex + 1);
+            doEditBook(bookName, bookList.get(bookIndex).getId());
+
+            // hide loading state
+            loadingDialog.hideLoading();
 
             // ask if the user wants to continue editing
             int choice = JOptionPane.showConfirmDialog(null, "Apakah Anda ingin mengubah buku lain?", Constant.APP_NAME, JOptionPane.YES_NO_OPTION);
@@ -74,57 +96,38 @@ public class Edit_Book {
 
     private List<Book> loadData() {
         List<Book> bookList = new ArrayList<>();
-        JSONParser parser = new JSONParser();
 
-        try (FileReader reader = new FileReader(Constant.BOOKS_FILE)) {
-            JSONArray bookArray = (JSONArray) parser.parse(reader);
+        try (Connection connection = DB_Connection.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM books");
+             ResultSet resultSet = statement.executeQuery()) {
 
-            for (Object bookObj : bookArray) {
-                JSONObject bookJson = (JSONObject) bookObj;
-                int id = Integer.parseInt(bookJson.get("id").toString());
-                String name = (String) bookJson.get("name");
-                String author = (String) bookJson.get("author");
-                String published = (String) bookJson.get("published");
-                int stock = Integer.parseInt(bookJson.get("stock").toString());
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String author = resultSet.getString("author");
+                String published = resultSet.getString("published");
+                int stock = resultSet.getInt("stock");
                 bookList.add(new Book(id, name, author, published, stock));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
         return bookList;
     }
 
     public void doEditBook(String bookName, int bookId) {
-        JSONParser parser = new JSONParser();
+        try (Connection connection = DB_Connection.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("UPDATE books SET name = ? WHERE id = ?")) {
 
-        try (FileReader reader = new FileReader(Constant.BOOKS_FILE)) {
-            JSONArray bookArray = (JSONArray) parser.parse(reader);
-
-            // parse bookArray.get(bookId - 1) to get name, author, published, and stock
-            JSONObject bookJson = (JSONObject) bookArray.get(bookId - 1);
-            int id = Integer.parseInt(bookJson.get("id").toString());
-            String author = (String) bookJson.get("author");
-            String published = (String) bookJson.get("published");
-            int stock = Integer.parseInt(bookJson.get("stock").toString());
-
-            JSONObject insetBook = new JSONObject();
-            insetBook.put("id", id);
-            insetBook.put("name", bookName);
-            insetBook.put("author", author);
-            insetBook.put("published", published);
-            insetBook.put("stock", stock);
-            bookArray.set(bookId - 1, insetBook);
-
-            try (FileWriter file = new FileWriter(Constant.BOOKS_FILE)) {
-                file.write(bookArray.toJSONString());
-                file.flush();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
+            statement.setString(1, bookName);
+            statement.setInt(2, bookId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
+            // Handle any potential exceptions here
+            JOptionPane.showMessageDialog(null, "Failed to edit the book.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
         }
     }
 }
-

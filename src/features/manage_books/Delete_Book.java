@@ -2,18 +2,22 @@ package features.manage_books;
 
 import config.Constant;
 import models.Book;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import utils.DB_Connection;
+import utils.LoadingDialog;
 
 import javax.swing.*;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Delete_Book {
+    private LoadingDialog loadingDialog;
+
     public Delete_Book() {
+        loadingDialog = new LoadingDialog();
         List<Book> bookList = loadData();
         boolean continueDeleting = true; // Flag to control the loop
 
@@ -23,7 +27,7 @@ public class Delete_Book {
 
             // display list of books
             for (int i = 0; i < bookList.size(); i++) {
-                content += (i + 1) + ". " + bookList.get(i) + "\n";
+                content += bookList.get(i).getId() + ". " + bookList.get(i).getName() + "\n";
             }
             content += "\n";
 
@@ -54,8 +58,9 @@ public class Delete_Book {
                     continue;
                 }
 
-                // delete book by id
+                loadingDialog.showLoading();
                 doDeleteBookById(bookId);
+                loadingDialog.hideLoading();
             } else if (method.equals("2")) {
                 // Delete by name
                 String askName = "Masukkan nama buku yang ingin dihapus";
@@ -66,8 +71,9 @@ public class Delete_Book {
                     continue;
                 }
 
-                // delete book by name
+                loadingDialog.showLoading();
                 doDeleteBookByName(bookName);
+                loadingDialog.hideLoading();
             } else {
                 JOptionPane.showMessageDialog(null, "Pilihan tidak valid!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
                 continue;
@@ -84,71 +90,47 @@ public class Delete_Book {
 
     private List<Book> loadData() {
         List<Book> bookList = new ArrayList<>();
-        JSONParser parser = new JSONParser();
+        loadingDialog.showLoading(); // Show the loading dialog
 
-        try (FileReader reader = new FileReader(Constant.BOOKS_FILE)) {
-            JSONArray bookArray = (JSONArray) parser.parse(reader);
+        try (Connection connection = DB_Connection.getDataSource().getConnection()) {
+            String sql = "SELECT * FROM books";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
 
-            for (Object bookObj : bookArray) {
-                JSONObject bookJson = (JSONObject) bookObj;
-                int id = Integer.parseInt(bookJson.get("id").toString());
-                String name = (String) bookJson.get("name");
-                String author = (String) bookJson.get("author");
-                String published = (String) bookJson.get("published");
-                int stock = Integer.parseInt(bookJson.get("stock").toString());
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String author = resultSet.getString("author");
+                String published = resultSet.getString("published");
+                int stock = resultSet.getInt("stock");
                 bookList.add(new Book(id, name, author, published, stock));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        loadingDialog.hideLoading(); // Hide the loading dialog after data has been loaded
         return bookList;
     }
 
     public void doDeleteBookById(int bookId) {
-        JSONParser parser = new JSONParser();
-
-        try (FileReader reader = new FileReader(Constant.BOOKS_FILE)) {
-            JSONArray bookArray = (JSONArray) parser.parse(reader);
-
-            for (int i = 0; i < bookArray.size(); i++) {
-                JSONObject book = (JSONObject) bookArray.get(i);
-
-                if (bookId == ((Long) book.get("id")).intValue()) {
-                    bookArray.remove(i);
-                    break;
-                }
-            }
-
-            FileWriter file = new FileWriter(Constant.BOOKS_FILE);
-            file.write(bookArray.toJSONString());
-            file.flush();
-            file.close();
-        } catch (Exception e) {
+        try (Connection connection = DB_Connection.getDataSource().getConnection()) {
+            String sql = "DELETE FROM books WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, bookId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void doDeleteBookByName(String bookName) {
-        JSONParser parser = new JSONParser();
-
-        try (FileReader reader = new FileReader(Constant.BOOKS_FILE)) {
-            JSONArray bookArray = (JSONArray) parser.parse(reader);
-
-            for (int i = 0; i < bookArray.size(); i++) {
-                JSONObject book = (JSONObject) bookArray.get(i);
-
-                if (bookName.equals(book.get("name"))) {
-                    bookArray.remove(i);
-                    break;
-                }
-            }
-
-            FileWriter file = new FileWriter(Constant.BOOKS_FILE);
-            file.write(bookArray.toJSONString());
-            file.flush();
-            file.close();
-        } catch (Exception e) {
+        try (Connection connection = DB_Connection.getDataSource().getConnection()) {
+            String sql = "DELETE FROM books WHERE name = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, bookName);
+            statement.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

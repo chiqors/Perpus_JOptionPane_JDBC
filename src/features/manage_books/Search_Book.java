@@ -1,23 +1,82 @@
 package features.manage_books;
 
 import config.Constant;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import models.Book;
+import utils.DB_Connection;
+import utils.LoadingDialog;
 
 import javax.swing.*;
-import java.io.FileReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Search_Book {
+    private final LoadingDialog loadingDialog;
+
     public Search_Book() {
+        loadingDialog = new LoadingDialog();
+        String bookName = JOptionPane.showInputDialog(null, "Masukkan nama buku yang ingin dicari:", Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
+
+        if (bookName != null) {
+            loadingDialog.showLoading();
+            searchBookByName(bookName);
+        } else {
+            new Book_Management_Menu();
+        }
+    }
+
+    private void searchBookByName(String bookName) {
+        List<Book> searchResults = new ArrayList<>();
+
+        try (Connection connection = DB_Connection.getDataSource().getConnection()) {
+            String query = "SELECT * FROM books WHERE LOWER(name) LIKE LOWER(?)";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, "%" + bookName + "%");
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        String name = resultSet.getString("name");
+                        String author = resultSet.getString("author");
+                        String published = resultSet.getString("published");
+                        int stock = resultSet.getInt("stock");
+
+                        Book book = new Book(id, name, author, published, stock);
+                        searchResults.add(book);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle any potential exceptions here
+            loadingDialog.hideLoading();
+            JOptionPane.showMessageDialog(null, "Failed to search for books.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        loadingDialog.hideLoading();
+        displaySearchResults(searchResults);
+    }
+
+    private void displaySearchResults(List<Book> searchResults) {
+        StringBuilder bookData = new StringBuilder();
+
+        for (Book book : searchResults) {
+            bookData.append("ID: ").append(book.getId()).append("\n");
+            bookData.append("Nama Buku: ").append(book.getName()).append("\n");
+            bookData.append("Penulis: ").append(book.getAuthor()).append("\n");
+            bookData.append("Tahun Terbit: ").append(book.getPublished()).append("\n");
+            bookData.append("Stok: ").append(book.getStock()).append("\n");
+        }
+
         int choice = 0;
-        // load search result from JSON file
-        String bookData = DoSearchBook(JOptionPane.showInputDialog(null, "Masukkan nama buku yang ingin dicari:", Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE));
+
         do {
             String title = "Cari Buku\n\n";
             String menu = JOptionPane.showInputDialog(null, title + bookData + "\n0. Kembali", Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
 
-            // if cancel button is clicked, then break the loop and return to Book Management Menu
             if (menu == null) {
                 choice = 0;
                 break;
@@ -28,7 +87,7 @@ public class Search_Book {
                 case 0:
                     break;
                 default:
-                    JOptionPane.showMessageDialog(null, "Pilihan tidak tersedia!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Pilihan tidak tersedia!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
                     break;
             }
         } while (choice != 0);
@@ -36,36 +95,5 @@ public class Search_Book {
         if (choice == 0) {
             new Book_Management_Menu();
         }
-    }
-
-    public String DoSearchBook(String bookName) {
-        // search book by name
-        String bookData = "";
-        JSONParser parser = new JSONParser();
-
-        try (FileReader reader = new FileReader(Constant.BOOKS_FILE)) {
-            JSONArray bookArray = (JSONArray) parser.parse(reader);
-
-            for (Object bookObj : bookArray) {
-                JSONObject bookJson = (JSONObject) bookObj;
-                int id = Integer.parseInt(bookJson.get("id").toString());
-                String name = (String) bookJson.get("name");
-                String author = (String) bookJson.get("author");
-                String published = (String) bookJson.get("published");
-                int stock = Integer.parseInt(bookJson.get("stock").toString());
-
-                if (name.toLowerCase().contains(bookName.toLowerCase())) {
-                    bookData += "ID: " + id + "\n";
-                    bookData += "Nama Buku: " + name + "\n";
-                    bookData += "Penulis: " + author + "\n";
-                    bookData += "Tahun Terbit: " + published + "\n";
-                    bookData += "Stok: " + stock + "\n";
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return bookData;
     }
 }

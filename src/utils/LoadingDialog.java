@@ -1,11 +1,12 @@
 package utils;
 
+import config.Constant;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class LoadingDialog extends JDialog {
     public LoadingDialog() {
-        setTitle("Loading...");
+        setTitle(Constant.APP_NAME);
         setSize(200, 100);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
