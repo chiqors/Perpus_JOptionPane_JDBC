@@ -127,8 +127,12 @@ public class BookService {
 
     public void deleteBook(int bookId) {
         loadingDialog.showLoading();
-        bookRepository.deleteBook(bookId);
+        boolean statusQuery = bookRepository.deleteBook(bookId);
         loadingDialog.hideLoading();
-        // Display a success message in the UI
+        if (statusQuery) {
+            JOptionPane.showMessageDialog(null, "Buku berhasil dihapus!", Constant.APP_NAME, JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Buku gagal dihapus!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

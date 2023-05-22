@@ -4,6 +4,9 @@ import config.Constant;
 import services.BookService;
 import models.Book;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 import javax.swing.*;
 
 public class CreateBookView {
@@ -43,6 +46,10 @@ public class CreateBookView {
                 break;
             } else if (bookYear.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Tanggal terbit tidak boleh kosong!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+                isCreating = true;
+                continue;
+            } else if (!bookYear.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+                JOptionPane.showMessageDialog(null, "Format tanggal terbit tidak valid!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
                 isCreating = true;
                 continue;
             }

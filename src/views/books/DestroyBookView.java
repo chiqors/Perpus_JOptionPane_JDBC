@@ -7,12 +7,12 @@ import services.BookService;
 import javax.swing.*;
 import java.util.List;
 
-public class EditBookView {
+public class DestroyBookView {
     private Object pagedBookList;
     private int currentPage = 1;
     private List<Book> bookList;
 
-    public EditBookView() {
+    public DestroyBookView() {
         BookService bookService = new BookService();
         pagedBookList = bookService.getPagedBookList(1, Constant.PAGE_SIZE);
         if (pagedBookList instanceof Object[]) {
@@ -94,26 +94,20 @@ public class EditBookView {
 
     private void getSelectedChoice(int selectedBookId) {
         BookService bookService = new BookService();
-
-        String title = "Ubah Buku\n\n";
-        String askName = "Masukkan nama buku: ";
-        String newBookName = JOptionPane.showInputDialog(null, title + askName, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
-
-        if (newBookName != null) {
-            if (newBookName.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Nama buku tidak boleh kosong.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
-            } else {
-                Book book = bookService.getBookById(selectedBookId);
-                if (book != null) {
-                    book.setName(newBookName);
-                    bookService.updateBook(book);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Buku tidak ditemukan.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
-                }
-            }
+        Book book = bookService.getBookById(selectedBookId);
+        if (book == null) {
+            JOptionPane.showMessageDialog(null, "Buku tidak ditemukan.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        // Refresh the page to display the updated bookList
+        String confirmDelete = String.format("Apakah Anda yakin ingin menghapus buku '%s'?", book.getName());
+        int confirm = JOptionPane.showConfirmDialog(null, confirmDelete, Constant.APP_NAME, JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            bookService.deleteBook(selectedBookId);
+        }
+
+        // Refresh the book list
         Object pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
         if (pagedBookList instanceof Object[]) {
             Object[] data = (Object[]) pagedBookList;

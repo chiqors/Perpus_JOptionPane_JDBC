@@ -20,7 +20,7 @@ public class BookController {
         new DisplayBookView();
     }
 
-    public void displaySearch() {
+    public void search() {
         new SearchBookView();
     }
 
@@ -30,5 +30,9 @@ public class BookController {
 
     public void edit() {
         new EditBookView();
+    }
+
+    public void destroy() {
+        new DestroyBookView();
     }
 }

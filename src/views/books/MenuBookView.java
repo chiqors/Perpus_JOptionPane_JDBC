@@ -32,13 +32,16 @@ public class MenuBookView {
                         new BookController().displayList();
                         break;
                     case 2:
-                        new BookController().displaySearch();
+                        new BookController().search();
                         break;
                     case 3:
                         new BookController().create();
                         break;
                     case 4:
                         new BookController().edit();
+                        break;
+                    case 5:
+                        new BookController().destroy();
                         break;
                 }
             } else {
