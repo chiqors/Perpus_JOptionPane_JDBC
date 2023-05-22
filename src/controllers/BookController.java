@@ -1,13 +1,10 @@
 package controllers;
 
-import config.Constant;
 import services.BookService;
-import views.books.CreateBookView;
-import views.books.SearchBookView;
+import views.books.*;
 
 public class BookController {
     private final BookService bookService;
-    private int currentPage = 1;
 
     public BookController() {
         bookService = new BookService();
@@ -15,8 +12,12 @@ public class BookController {
 
     // -----------------------------
 
+    public void displayMenu() {
+        new MenuBookView();
+    }
+
     public void displayList() {
-        bookService.displayPagedBookList(currentPage, Constant.PAGE_SIZE);
+        new DisplayBookView();
     }
 
     public void displaySearch() {
@@ -25,5 +26,9 @@ public class BookController {
 
     public void create() {
         new CreateBookView();
+    }
+
+    public void edit() {
+        new EditBookView();
     }
 }

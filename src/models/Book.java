@@ -73,4 +73,8 @@ public class Book {
     public void setStock(int i) {
         this.stock = i;
     }
+
+    public void setName(String newBookName) {
+        this.name = newBookName;
+    }
 }

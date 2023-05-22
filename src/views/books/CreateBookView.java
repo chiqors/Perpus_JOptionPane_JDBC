@@ -3,7 +3,6 @@ package views.books;
 import config.Constant;
 import services.BookService;
 import models.Book;
-import views.menu.BookManagementMenu;
 
 import javax.swing.*;
 
@@ -70,7 +69,7 @@ public class CreateBookView {
         } while (isCreating);
 
         if (!isCreating) {
-            new BookManagementMenu();
+            new MenuBookView();
         }
     }
 }

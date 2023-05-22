@@ -1,12 +1,13 @@
-package views.menu;
+package views.books;
 
 import config.Constant;
 import controllers.BookController;
+import views.menu.MainMenu;
 
 import javax.swing.*;
 
-public class BookManagementMenu {
-    public BookManagementMenu() {
+public class MenuBookView {
+    public MenuBookView() {
         int choice = 0;
         do {
             String title = "Pengelolaan Data Buku\n\n";
@@ -35,6 +36,9 @@ public class BookManagementMenu {
                         break;
                     case 3:
                         new BookController().create();
+                        break;
+                    case 4:
+                        new BookController().edit();
                         break;
                 }
             } else {

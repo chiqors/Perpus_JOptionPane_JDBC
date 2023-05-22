@@ -1,6 +1,8 @@
 package views.menu;
 
 import config.Constant;
+import controllers.BookController;
+import views.books.MenuBookView;
 
 import javax.swing.*;
 
@@ -24,7 +26,7 @@ public class MainMenu {
 
             switch (choice) {
                 case 1:
-                    new BookManagementMenu();
+                    new BookController().displayMenu();
                     break;
                 case 2:
                     //
