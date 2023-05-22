@@ -1,30 +1,30 @@
-package views.books;
+package views.members;
 
 import config.Constant;
-import controllers.BookController;
-import models.Book;
-import services.BookService;
+import controllers.MemberController;
+import models.Member;
+import services.MemberService;
 
 import javax.swing.*;
 import java.util.List;
 
-public class DisplayBookView {
+public class DisplayMemberView {
     private int currentPage = 1;
-    private List<Book> bookList;
-    private Object pagedBookList;
+    private List<Member> memberList;
+    private Object pagedMemberList;
 
-    public DisplayBookView() {
+    public DisplayMemberView() {
         displayPagedBookList(currentPage, Constant.PAGE_SIZE);
     }
 
     public void displayPagedBookList(int page, int pageSize) {
-        BookService bookService = new BookService();
-        Object result = bookService.getPagedBookList(page, pageSize);
+        MemberService bookService = new MemberService();
+        Object result = bookService.getPagedMemberList(page, pageSize);
 
         // Check if the result is an array of objects
         if (result instanceof Object[]) {
             Object[] data = (Object[]) result; // Use typecast, since the compiler doesn't know the type of the array
-            bookList = (List<Book>) data[0]; // Use typecast, since the compiler doesn't know the type of the list
+            memberList = (List<Member>) data[0]; // Use typecast, since the compiler doesn't know the type of the list
             int totalPages = Integer.parseInt(data[1].toString());
             currentPage = Integer.parseInt(data[2].toString());
 
@@ -32,14 +32,14 @@ public class DisplayBookView {
             int choice = 0;
 
             do {
-                String title = "Daftar Buku\n";
+                String title = "Daftar Anggota\n";
                 String content = String.format("Hal %d dari %d\n\n", currentPage, totalPages);
-                StringBuilder bookData = new StringBuilder();
-                for (int i = 0; i < bookList.size(); i++) {
-                    Book book = bookList.get(i);
-                    bookData.append(String.format("%d. %s\n", book.getId(), book.getName()));
+                StringBuilder memberData = new StringBuilder();
+                for (int i = 0; i < memberList.size(); i++) {
+                    Member member = memberList.get(i);
+                    memberData.append(String.format("%d. %s\n", member.getId(), member.getName()));
                 }
-                content += bookData + "\n";
+                content += memberData + "\n";
                 if (currentPage > 1) {
                     content += "q. Hal Sebelumnya\n";
                 }
@@ -58,19 +58,19 @@ public class DisplayBookView {
                     if (input.equalsIgnoreCase("q")) {
                         // Go to the previous page
                         currentPage--;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
+                        pagedMemberList = bookService.getPagedMemberList(currentPage, Constant.PAGE_SIZE);
+                        if (pagedMemberList instanceof Object[]) {
+                            data = (Object[]) pagedMemberList;
+                            memberList = (List<Member>) data[0];
                             totalPages = Integer.parseInt(data[1].toString());
                         }
                     } else if (input.equalsIgnoreCase("e")) {
                         // Go to the next page
                         currentPage++;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
+                        pagedMemberList = bookService.getPagedMemberList(currentPage, Constant.PAGE_SIZE);
+                        if (pagedMemberList instanceof Object[]) {
+                            data = (Object[]) pagedMemberList;
+                            memberList = (List<Member>) data[0];
                             totalPages = Integer.parseInt(data[1].toString());
                         }
                         // Update the choice to continue the loop
@@ -83,7 +83,7 @@ public class DisplayBookView {
             } while (choice != 0);
 
             if (choice == 0) {
-                new BookController().displayMenu();
+                new MemberController().displayMenu();
             }
         } else {
             // Handle the case where the result is not as expected

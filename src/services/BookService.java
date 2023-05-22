@@ -1,6 +1,7 @@
 package services;
 
 import config.Constant;
+import controllers.BookController;
 import models.Book;
 import repositories.BookRepository;
 import utils.LoadingDialog;
@@ -99,7 +100,7 @@ public class BookService {
         } while (choice != 0);
 
         if (choice == 0) {
-            new MenuBookView();
+            new BookController().displayMenu();
         }
     }
 

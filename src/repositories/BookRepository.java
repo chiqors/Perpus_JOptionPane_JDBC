@@ -13,33 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookRepository {
-    public List<Book> getAllBooks() {
-        List<Book> bookList = new ArrayList<>();
-
-        try (Connection connection = DBConnection.getDataSource().getConnection()) {
-            String query = "SELECT * FROM books";
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String author = resultSet.getString("author");
-                String published = resultSet.getString("published");
-                int stock = resultSet.getInt("stock");
-
-                Book book = new Book(id, name, author, published, stock);
-                bookList.add(book);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle any potential exceptions here
-            JOptionPane.showMessageDialog(null, "Failed to load book data.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
-        }
-
-        return bookList;
-    }
-
     public Book getBookById(int id) {
         Book book = null;
 

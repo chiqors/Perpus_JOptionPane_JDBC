@@ -1,6 +1,7 @@
 package views.books;
 
 import config.Constant;
+import controllers.BookController;
 import models.Book;
 import services.BookService;
 
@@ -85,7 +86,7 @@ public class EditBookView {
 
             if (choice == 0) {
                 // Go back to the previous menu
-                new MenuBookView();
+                new BookController().displayMenu();
             }
         } else {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat mengambil data buku.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);

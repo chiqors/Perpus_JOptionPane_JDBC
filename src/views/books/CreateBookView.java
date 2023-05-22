@@ -1,6 +1,7 @@
 package views.books;
 
 import config.Constant;
+import controllers.BookController;
 import services.BookService;
 import models.Book;
 
@@ -76,7 +77,7 @@ public class CreateBookView {
         } while (isCreating);
 
         if (!isCreating) {
-            new MenuBookView();
+            new BookController().displayMenu();
         }
     }
 }

@@ -2,6 +2,7 @@ package views.menu;
 
 import config.Constant;
 import controllers.BookController;
+import controllers.MemberController;
 import views.books.MenuBookView;
 
 import javax.swing.*;
@@ -29,7 +30,7 @@ public class MainMenu {
                     new BookController().displayMenu();
                     break;
                 case 2:
-                    //
+                    new MemberController().displayMenu();
                     break;
                 case 3:
                     //
