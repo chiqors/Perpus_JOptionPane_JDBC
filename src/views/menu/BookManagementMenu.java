@@ -10,28 +10,36 @@ public class BookManagementMenu {
         int choice = 0;
         do {
             String title = "Pengelolaan Data Buku\n\n";
-            String menuData = "1. List Buku\n2. Cari Buku\n3. Tambah Buku\n4. Edit Buku\n5. Hapus Buku\n\n0. Kembali";
-            String menu = JOptionPane.showInputDialog(null, title + menuData, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
+            String menuData = "1. List Buku\n2. Cari Buku\n3. Tambah Buku\n4. Edit Buku\n5. Hapus Buku\n\n0. Kembali ke menu utama";
+            String menuChoice = "\n\nMasukkan pilihan menu:";
 
-            // if cancel button is clicked, then return to Main Menu
-            if (menu == null) {
-                choice = 0;
-            } else if (!menu.matches("[0-9]*")) { // if user inputted alphabet or symbol, then show error message
-                JOptionPane.showMessageDialog(null, "Input harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
-                continue;
-            }
-            choice = Integer.parseInt(menu);
+            String menu = JOptionPane.showInputDialog(null, title + menuData + menuChoice, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
 
-            switch (choice) {
-                case 0:
-                    new MainMenu(); // Create a new MainMenu instance
-                    return; // Exit the method
-                case 1:
-                    new BookController().displayList();
-                    break;
-                case 2:
-                    new BookController().displaySearch();
-                    break;
+            if (menu != null) {
+                if (!menu.matches("[0-9]*")) {
+                    JOptionPane.showMessageDialog(null, "Input harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                choice = Integer.parseInt(menu);
+
+                switch (choice) {
+                    case 0:
+                        new MainMenu(); // Create a new MainMenu instance
+                        return; // Exit the method
+                    case 1:
+                        new BookController().displayList();
+                        break;
+                    case 2:
+                        new BookController().displaySearch();
+                        break;
+                    case 3:
+                        new BookController().create();
+                        break;
+                }
+            } else {
+                new MainMenu(); // Create a new MainMenu instance
+                return; // Exit the method
             }
         } while (choice < 1 || choice > 5);
     }

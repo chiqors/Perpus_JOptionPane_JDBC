@@ -171,9 +171,13 @@ public class BookService {
 
     public void addBook(Book book) {
         loadingDialog.showLoading();
-        bookRepository.insertBook(book);
+        boolean statusQuery = bookRepository.insertBook(book);
         loadingDialog.hideLoading();
-        // Display a success message in the UI
+        if (statusQuery) {
+            JOptionPane.showMessageDialog(null, "Buku berhasil ditambahkan!", Constant.APP_NAME, JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Buku gagal ditambahkan!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void updateBook(Book book) {

@@ -2,6 +2,7 @@ package controllers;
 
 import config.Constant;
 import services.BookService;
+import views.books.CreateBookView;
 import views.books.SearchBookView;
 
 public class BookController {
@@ -20,5 +21,9 @@ public class BookController {
 
     public void displaySearch() {
         new SearchBookView();
+    }
+
+    public void create() {
+        new CreateBookView();
     }
 }
