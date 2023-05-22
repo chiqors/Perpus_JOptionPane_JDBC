@@ -15,6 +15,13 @@ public class Member {
         this.registered_at = registered_at;
     }
 
+    public Member(String name, String email, String phone, String registered_at) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.registered_at = registered_at;
+    }
+
     @Override
     public String toString() {
         return name + " - " + email + " - " + phone + " - " + registered_at;

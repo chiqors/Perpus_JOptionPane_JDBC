@@ -1,6 +1,7 @@
 package controllers;
 
 import services.MemberService;
+import views.members.CreateMemberView;
 import views.members.DisplayMemberView;
 import views.members.MenuMemberView;
 
@@ -19,5 +20,9 @@ public class MemberController {
 
     public void displayList() {
         new DisplayMemberView();
+    }
+
+    public void create() {
+        new CreateMemberView();
     }
 }

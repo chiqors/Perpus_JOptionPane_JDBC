@@ -5,9 +5,6 @@ import controllers.BookController;
 import services.BookService;
 import models.Book;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
 import javax.swing.*;
 
 public class CreateBookView {

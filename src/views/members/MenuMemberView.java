@@ -33,6 +33,9 @@ public class MenuMemberView {
                         case 1:
                             new MemberController().displayList();
                             break;
+                        case 2:
+                            new MemberController().create();
+                            break;
                         default:
                             JOptionPane.showMessageDialog(null, "Masukkan pilihan menu yang valid!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
                             choice = -1;
