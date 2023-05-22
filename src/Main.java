@@ -1,7 +1,7 @@
-import features.Main_Menu;
+import views.menu.MainMenu;
 
 public class Main {
     public static void main(String[] args) {
-        new Main_Menu();
+        new MainMenu();
     }
 }

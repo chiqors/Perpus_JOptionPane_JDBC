@@ -3,10 +3,9 @@ package utils;
 import javax.sql.DataSource;
 
 import config.Constant;
-import models.Book;
 import org.postgresql.ds.PGSimpleDataSource;
 
-public class DB_Connection {
+public class DBConnection {
     private static DataSource dataSource = null;
 
     public static DataSource getDataSource() {

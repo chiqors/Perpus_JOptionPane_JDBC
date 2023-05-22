@@ -1,16 +1,11 @@
-package features;
+package views.menu;
+
+import config.Constant;
 
 import javax.swing.*;
 
-import config.Constant;
-import features.borrowment.Borrow_Book;
-import features.manage_books.Book_Management_Menu;
-import features.membership.Member_Management_Menu;
-import features.returnment.Return_Book;
-import features.transaction.Transaction_List;
-
-public class Main_Menu {
-    public Main_Menu() {
+public class MainMenu {
+    public MainMenu() {
         int choice = 0;
         do {
             String title = "Main Menu\n\n";
@@ -20,23 +15,28 @@ public class Main_Menu {
             if (menu == null) {
                 System.exit(0);
             }
+            // if user inputted alphabet or symbol, then show error message
+            if (!menu.matches("[0-9]*")) {
+                JOptionPane.showMessageDialog(null, "Input harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
             choice = Integer.parseInt(menu);
 
             switch (choice) {
                 case 1:
-                    new Book_Management_Menu();
+                    new BookManagementMenu();
                     break;
                 case 2:
-                    new Member_Management_Menu();
+                    //
                     break;
                 case 3:
-                    new Borrow_Book();
+                    //
                     break;
                 case 4:
-                    new Return_Book();
+                    //
                     break;
                 case 5:
-                    new Transaction_List();
+                    //
                     break;
                 case 0:
                     System.exit(0);

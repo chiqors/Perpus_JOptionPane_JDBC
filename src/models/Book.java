@@ -1,5 +1,7 @@
 package models;
 
+import java.util.ArrayList;
+
 public class Book {
     private int id;
     private String name;
@@ -27,14 +29,18 @@ public class Book {
         return name + " - " + author + " - " + published + " - " + stock;
     }
 
-    public String toJSONString() {
-        return "{" +
-                "\"id\":" + id +
-                ", \"name\":\"" + name + "\"" +
-                ", \"author\":\"" + author + "\"" +
-                ", \"published\":\"" + published + "\"" +
-                ", \"stock\":" + stock +
-                "}";
+    public static ArrayList<Book> parseJSON(String borrowed_books) {
+        ArrayList<Book> books = new ArrayList<>();
+        String[] booksString = borrowed_books.split("},");
+        for (String bookString : booksString) {
+            String[] bookStringSplit = bookString.split(",");
+            int id = Integer.parseInt(bookStringSplit[0].split(":")[1]);
+            String name = bookStringSplit[1].split(":")[1].replace("\"", "");
+            String author = bookStringSplit[2].split(":")[1].replace("\"", "");
+            String published = bookStringSplit[3].split(":")[1].replace("\"", "");
+            books.add(new Book(id, name, author, published));
+        }
+        return books;
     }
 
     public int getId() {
