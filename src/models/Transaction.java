@@ -1,5 +1,8 @@
 package models;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 
 public class Transaction {
@@ -12,38 +15,44 @@ public class Transaction {
     private ArrayList<Book> borrowed_books;
     private String returned_date;
 
-    public Transaction(int id, String borrowed_date, String expected_return_date, String status, int member_id, String member_name, ArrayList<Book> borrowed_books, String returned_date) {
-        this.id = id;
-        this.borrowed_date = borrowed_date;
-        this.expected_return_date = expected_return_date;
-        this.status = status;
-        this.member_id = member_id;
-        this.member_name = member_name;
-        this.borrowed_books = borrowed_books;
-        this.returned_date = returned_date;
-    }
-
-    public Transaction(int id, String borrowed_date, String expected_return_date, String status, int member_id, String member_name, ArrayList<Book> borrowed_books) {
-        this.id = id;
-        this.borrowed_date = borrowed_date;
-        this.expected_return_date = expected_return_date;
-        this.status = status;
-        this.member_id = member_id;
-        this.member_name = member_name;
-        this.borrowed_books = borrowed_books;
-    }
-
     @Override
     public String toString() {
+        int i = 1;
         StringBuilder stringBuilder = new StringBuilder();
         for (Book borrowedBook : borrowed_books) {
-            stringBuilder.append(borrowedBook.getName()).append("\n");
+            stringBuilder.append(i + ". " + borrowedBook.getName() + " | (" + borrowedBook.getQty() + ")").append("\n");
+            i++;
         }
-        return "\n# ID: " + id +
-                "\n# Tanggal Pinjam/Batas Pengembalian: " + borrowed_date + " - " + expected_return_date +
-                "\n# Status: " + status +
-                "\n# Anggota: " + member_id + " - " + member_name +
-                "\n# Buku yang dipinjam:\n" + stringBuilder.toString();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date expectedReturnDate = null;
+        Date returnedDate = null;
+        try {
+            expectedReturnDate = formatter.parse(expected_return_date);
+            returnedDate = formatter.parse(returned_date);
+        } catch (Exception e) {
+            // e.printStackTrace();
+        }
+
+        if (returnedDate != null) {
+            if (returnedDate.after(expectedReturnDate)) {
+                status = "Terlambat Mengembalikan";
+            } else {
+                status = "Tepat Waktu";
+            }
+        } else {
+            status = "Belum Dikembalikan";
+        }
+
+        String content = "\n# ID: " + id;
+        content += "\n# Tanggal Peminjaman: " + borrowed_date + " - " + expected_return_date;
+        if (returned_date != null) {
+            content += "\n# Tanggal Pengembalian: " + returned_date;
+        }
+        content += "\n# Status: " + status;
+        content += "\n# Anggota: ID " + member_id + " | " + member_name;
+        content += "\n# Buku yang dipinjam:\n" + stringBuilder.toString();
+        return content;
     }
 
     public String showMenuReturn() {
@@ -75,36 +84,60 @@ public class Transaction {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getBorrowedDate() {
         return borrowed_date;
     }
 
-    public String getReturnedDate() {
-        return returned_date;
+    public void setBorrowedDate(String borrowed_date) {
+        this.borrowed_date = borrowed_date;
+    }
+
+    public String getExpectedReturnDate() {
+        return expected_return_date;
+    }
+
+    public void setExpectedReturnDate(String expected_return_date) {
+        this.expected_return_date = expected_return_date;
     }
 
     public String getStatus() {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public int getMemberId() {
         return member_id;
+    }
+
+    public void setMemberId(int member_id) {
+        this.member_id = member_id;
     }
 
     public String getMemberName() {
         return member_name;
     }
 
+    public void setMemberName(String member_name) {
+        this.member_name = member_name;
+    }
+
     public ArrayList<Book> getBorrowedBooks() {
         return borrowed_books;
     }
 
-    public String getExpected_return_date() {
-        return expected_return_date;
+    public void setBorrowedBooks(ArrayList<Book> borrowed_books) {
+        this.borrowed_books = borrowed_books;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getReturnedDate() {
+        return returned_date;
     }
 
     public void setReturnedDate(String returned_date) {

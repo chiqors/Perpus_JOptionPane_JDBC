@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BookRepository {
     public Book getBookById(int id) {
-        Book book = null;
+        Book book = new Book();
 
         try (Connection connection = DBConnection.getDataSource().getConnection()) {
             String query = "SELECT * FROM books WHERE id = ?";
@@ -28,7 +28,11 @@ public class BookRepository {
                 String published = resultSet.getString("published");
                 int stock = resultSet.getInt("stock");
 
-                book = new Book(id, name, author, published, stock);
+                book.setId(id);
+                book.setName(name);
+                book.setAuthor(author);
+                book.setPublished(published);
+                book.setStock(stock);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -43,7 +47,7 @@ public class BookRepository {
         List<Book> bookList = new ArrayList<>();
 
         try (Connection connection = DBConnection.getDataSource().getConnection()) {
-            String query = "SELECT * FROM books LIMIT ? OFFSET ?";
+            String query = "SELECT * FROM books ORDER BY id ASC LIMIT ? OFFSET ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, limit);
             statement.setInt(2, (page - 1) * limit);
@@ -56,7 +60,58 @@ public class BookRepository {
                 String published = resultSet.getString("published");
                 int stock = resultSet.getInt("stock");
 
-                Book book = new Book(id, name, author, published, stock);
+                Book book = new Book();
+                book.setId(id);
+                book.setName(name);
+                book.setAuthor(author);
+                book.setPublished(published);
+                book.setStock(stock);
+                bookList.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle any potential exceptions here
+            JOptionPane.showMessageDialog(null, "Failed to load book data.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+        }
+
+        return bookList;
+    }
+
+    // getPagedBooksWithoutBlackListed: page, limit, blacklistBooksId
+    // SELECT * FROM books WHERE id NOT IN (1, 2, 3) LIMIT 10 OFFSET 0
+    public List<Book> getPagedBooksWithoutBlackListed(int page, int limit, List<Integer> blacklistBooksId) {
+        List<Book> bookList = new ArrayList<>();
+
+        try (Connection connection = DBConnection.getDataSource().getConnection()) {
+            String query = "SELECT * FROM books WHERE id NOT IN (";
+            for (int i = 0; i < blacklistBooksId.size(); i++) {
+                query += "?";
+                if (i < blacklistBooksId.size() - 1) {
+                    query += ", ";
+                }
+            }
+            query += ") LIMIT ? OFFSET ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            for (int i = 0; i < blacklistBooksId.size(); i++) {
+                statement.setInt(i + 1, blacklistBooksId.get(i));
+            }
+            statement.setInt(blacklistBooksId.size() + 1, limit);
+            statement.setInt(blacklistBooksId.size() + 2, (page - 1) * limit);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String author = resultSet.getString("author");
+                String published = resultSet.getString("published");
+                int stock = resultSet.getInt("stock");
+
+                Book book = new Book();
+                book.setId(id);
+                book.setName(name);
+                book.setAuthor(author);
+                book.setPublished(published);
+                book.setStock(stock);
                 bookList.add(book);
             }
         } catch (SQLException e) {
@@ -104,7 +159,12 @@ public class BookRepository {
                 String published = resultSet.getString("published");
                 int stock = resultSet.getInt("stock");
 
-                Book book = new Book(id, name, author, published, stock);
+                Book book = new Book();
+                book.setId(id);
+                book.setName(name);
+                book.setAuthor(author);
+                book.setPublished(published);
+                book.setStock(stock);
                 searchResults.add(book);
             }
         } catch (SQLException e) {

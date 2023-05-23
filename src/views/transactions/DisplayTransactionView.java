@@ -1,30 +1,30 @@
-package views.books;
+package views.transactions;
 
 import config.Constant;
-import controllers.BookController;
-import models.Book;
-import services.BookService;
+import models.Transaction;
+import services.TransactionService;
+import views.menu.MainMenu;
 
 import javax.swing.*;
 import java.util.List;
 
-public class DisplayBookView {
+public class DisplayTransactionView {
     private int currentPage = 1;
-    private List<Book> bookList;
-    private Object pagedBookList;
+    private List<Transaction> transactionList;
+    private Object pagedTransactionList;
 
-    public DisplayBookView() {
-        displayPagedBookList(currentPage, Constant.PAGE_SIZE);
+    public DisplayTransactionView() {
+        displayPagedTransactionList(currentPage, 2);
     }
 
-    public void displayPagedBookList(int page, int pageSize) {
-        BookService bookService = new BookService();
-        Object result = bookService.getPagedBookList(page, pageSize);
+    public void displayPagedTransactionList(int page, int pageSize) {
+        TransactionService transactionService = new TransactionService();
+        Object result = transactionService.getPagedTransactionList(page, pageSize);
 
         // Check if the result is an array of objects
         if (result instanceof Object[]) {
             Object[] data = (Object[]) result; // Use typecast, since the compiler doesn't know the type of the array
-            bookList = (List<Book>) data[0]; // Use typecast, since the compiler doesn't know the type of the list
+            transactionList = (List<Transaction>) data[0]; // Use typecast, since the compiler doesn't know the type of the list
             int totalPages = Integer.parseInt(data[1].toString());
             currentPage = Integer.parseInt(data[2].toString());
 
@@ -32,22 +32,22 @@ public class DisplayBookView {
             int choice = 0;
 
             do {
-                String title = "Daftar Buku\n";
-                String content = String.format("Hal %d dari %d\n\n", currentPage, totalPages);
-                StringBuilder bookData = new StringBuilder();
-                for (int i = 0; i < bookList.size(); i++) {
-                    Book book = bookList.get(i);
-                    bookData.append(String.format("%d. %s\n", book.getId(), book.getName()));
+                String title = "Daftar Transaksi\n";
+                String content = String.format("Hal %d dari %d\n", currentPage, totalPages);
+                StringBuilder transactionData = new StringBuilder();
+                for (int i = 0; i < transactionList.size(); i++) {
+                    Transaction transaction = transactionList.get(i);
+                    transactionData.append(String.format("%s", transaction.toString()));
                 }
-                content += bookData + "\n";
+                content += transactionData+"\n";
                 if (currentPage > 1) {
                     content += "Q. Hal Sebelumnya\n";
                 }
                 if (currentPage < totalPages) {
                     content += "E. Hal Berikutnya\n";
                 }
-                content += "0. Kembali ke menu sebelumnya\n\n";
-                content += "Pilih menu: ";
+                content += "\nMenu:\n";
+                content += "0. Kembali ke menu sebelumnya";
 
                 String input = JOptionPane.showInputDialog(null, title + content, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
 
@@ -58,19 +58,19 @@ public class DisplayBookView {
                     if (input.equalsIgnoreCase("q")) {
                         // Go to the previous page
                         currentPage--;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
+                        pagedTransactionList = transactionService.getPagedTransactionList(currentPage, Constant.PAGE_SIZE);
+                        if (pagedTransactionList instanceof Object[]) {
+                            data = (Object[]) pagedTransactionList;
+                            transactionList = (List<Transaction>) data[0];
                             totalPages = Integer.parseInt(data[1].toString());
                         }
                     } else if (input.equalsIgnoreCase("e")) {
                         // Go to the next page
                         currentPage++;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
+                        pagedTransactionList = transactionService.getPagedTransactionList(currentPage, Constant.PAGE_SIZE);
+                        if (pagedTransactionList instanceof Object[]) {
+                            data = (Object[]) pagedTransactionList;
+                            transactionList = (List<Transaction>) data[0];
                             totalPages = Integer.parseInt(data[1].toString());
                         }
                         // Update the choice to continue the loop
@@ -83,7 +83,7 @@ public class DisplayBookView {
             } while (choice != 0);
 
             if (choice == 0) {
-                new BookController().displayMenu();
+                new MainMenu();
             }
         } else {
             // Handle the case where the result is not as expected

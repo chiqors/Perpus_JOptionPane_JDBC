@@ -35,10 +35,10 @@ public class EditBookView {
                 }
                 content += bookData + "\n";
                 if (currentPage > 1) {
-                    content += "q. Hal Sebelumnya\n";
+                    content += "Q. Hal Sebelumnya\n";
                 }
                 if (currentPage < totalPages) {
-                    content += "e. Hal Berikutnya\n";
+                    content += "E. Hal Berikutnya\n";
                 }
                 content += "0. Kembali ke menu sebelumnya\n\n";
                 content += "Pilih nomor buku yang akan diubah: ";

@@ -59,7 +59,13 @@ public class CreateMemberView {
             String registered_at = formatter.format(date);
 
             isCreating = false;
-            Member member = new Member(memberName, memberEmail, memberPhone, registered_at);
+
+            Member member = new Member();
+            member.setName(memberName);
+            member.setEmail(memberEmail);
+            member.setPhone(memberPhone);
+            member.setRegistered_at(registered_at);
+
             memberService.addMember(member);
         } while (isCreating);
 

@@ -21,6 +21,13 @@ public class MemberService {
     // All Non-Void Methods Below
     // -----------------------------
 
+    public Boolean isMemberIdValid(int memberId) {
+        loadingDialog.showLoading();
+        Boolean isValid = memberRepository.isMemberIdValid(memberId);
+        loadingDialog.hideLoading();
+        return isValid;
+    }
+
     public Member getMemberById(int memberId) {
         loadingDialog.showLoading();
         Member member = memberRepository.getMemberById(memberId);

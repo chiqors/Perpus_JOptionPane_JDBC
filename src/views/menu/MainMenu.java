@@ -3,6 +3,7 @@ package views.menu;
 import config.Constant;
 import controllers.BookController;
 import controllers.MemberController;
+import controllers.TransactionController;
 import views.books.MenuBookView;
 
 import javax.swing.*;
@@ -33,13 +34,13 @@ public class MainMenu {
                     new MemberController().displayMenu();
                     break;
                 case 3:
-                    //
+                    new TransactionController().create();
                     break;
                 case 4:
-                    //
+                    new TransactionController().update();
                     break;
                 case 5:
-                    //
+                    new TransactionController().displayList();
                     break;
                 case 0:
                     System.exit(0);

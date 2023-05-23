@@ -69,7 +69,13 @@ public class CreateBookView {
             }
 
             isCreating = false;
-            Book book = new Book(bookName, bookAuthor, bookYear, stock);
+
+            Book book = new Book();
+            book.setName(bookName);
+            book.setAuthor(bookAuthor);
+            book.setPublished(bookYear);
+            book.setStock(stock);
+
             bookService.addBook(book);
         } while (isCreating);
 

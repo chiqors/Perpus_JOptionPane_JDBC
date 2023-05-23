@@ -28,7 +28,13 @@ public class MemberRepository {
                 String email = resultSet.getString("email");
                 String phone = resultSet.getString("phone");
                 String registered_at = resultSet.getString("registered_at");
-                member = new Member(id, name, email, phone, registered_at);
+
+                member = new Member();
+                member.setId(id);
+                member.setName(name);
+                member.setEmail(email);
+                member.setPhone(phone);
+                member.setRegistered_at(registered_at);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,7 +81,15 @@ public class MemberRepository {
                 String email = resultSet.getString("email");
                 String phone = resultSet.getString("phone");
                 String registered_at = resultSet.getString("registered_at");
-                memberList.add(new Member(id, name, email, phone, registered_at));
+
+                Member member = new Member();
+                member.setId(id);
+                member.setName(name);
+                member.setEmail(email);
+                member.setPhone(phone);
+                member.setRegistered_at(registered_at);
+
+                memberList.add(member);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -86,6 +100,26 @@ public class MemberRepository {
         return memberList;
     }
 
+    public Boolean isMemberIdValid(int memberId) {
+        try (Connection connection = DBConnection.getDataSource().getConnection()) {
+            String query = "SELECT COUNT(id) AS total FROM members WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, memberId);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int total = resultSet.getInt("total");
+                return total > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle any potential exceptions here
+            JOptionPane.showMessageDialog(null, "Failed to load book data.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+        }
+
+        return false;
+    }
+
     public Boolean insertMember(Member member) {
         try (Connection connection = DBConnection.getDataSource().getConnection()) {
             String query = "INSERT INTO members (name, email, phone) VALUES (?, ?, ?)";
@@ -93,6 +127,7 @@ public class MemberRepository {
             statement.setString(1, member.getName());
             statement.setString(2, member.getEmail());
             statement.setString(3, member.getPhone());
+            statement.setString(4, member.getRegistered_at());
 
             statement.executeUpdate();
         } catch (SQLException e) {
