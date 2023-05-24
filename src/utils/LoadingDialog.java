@@ -6,6 +6,7 @@ import javax.swing.*;
 
 public class LoadingDialog extends JDialog {
     public LoadingDialog() {
+        setIconImage(new ImageIcon(getClass().getResource("/resources/icon.png")).getImage());
         setTitle(Constant.APP_NAME);
         setSize(200, 100);
         setLocationRelativeTo(null);

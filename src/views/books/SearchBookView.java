@@ -40,32 +40,27 @@ public class SearchBookView {
             String title = "Hasil Pencarian Buku\n\n";
             String bookData = "";
             for (int i = 0; i < searchResults.size(); i++) {
-                bookData += (i + 1) + ". " + searchResults.get(i) + "\n";
+                bookData += searchResults.get(i).menuListBooks();
+            }
+            if (searchResults.size() == 0) {
+                bookData += "Tidak ada buku yang ditemukan!\n";
             }
             String menuChoice = "\nPilih menu: \n";
 
-            menuChoice += "0. Kembali ke menu sebelumnya\n";
+            menuChoice += "0. Kembali ke menu sebelumnya";
 
             String menu = JOptionPane.showInputDialog(null, title + bookData + menuChoice, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
 
             // if cancel button is clicked, then return to Main Menu
             if (menu == null) {
                 choice = 0;
-                break;
-            }
-            // if user inputted alphabet or symbol, then show error message
-            if (!menu.matches("[0-9]*")) {
-                JOptionPane.showMessageDialog(null, "Input harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
-                continue;
-            }
-            choice = Integer.parseInt(menu);
-
-            switch (choice) {
-                case 0:
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(null, "Pilihan tidak tersedia!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
-                    break;
+            } else if (!menu.matches("[0-9]*")) {
+                JOptionPane.showMessageDialog(null, "Menu yang Anda masukkan salah!", "Error", JOptionPane.ERROR_MESSAGE);
+                choice = -1;
+            } else if (menu.equals("0")) {
+                choice = 0;
+            } else {
+                choice = -1;
             }
         } while (choice != 0);
 

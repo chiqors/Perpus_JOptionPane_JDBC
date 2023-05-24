@@ -78,27 +78,35 @@ public class CreateTransactionView {
                     choice = 0;
                 } else {
                     if (input.equalsIgnoreCase("q")) {
-                        // Go to the previous page
-                        currentPage--;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
-                            currentPage = Integer.parseInt(data[2].toString());
+                        if (currentPage > 1) {
+                            // Go to the previous page
+                            currentPage--;
+                            pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedBookList instanceof Object[]) {
+                                data = (Object[]) pagedBookList;
+                                bookList = (List<Book>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                                currentPage = Integer.parseInt(data[2].toString());
+                            }
+                            choice = -1; // Update choice to continue the loop
+                        } else {
+                            choice = -1;
                         }
-                        choice = -1; // Update choice to continue the loop
                     } else if (input.equalsIgnoreCase("e")) {
-                        // Go to the next page
-                        currentPage++;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
-                            currentPage = Integer.parseInt(data[2].toString());
+                        if (currentPage < totalPages) {
+                            // Go to the next page
+                            currentPage++;
+                            pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedBookList instanceof Object[]) {
+                                data = (Object[]) pagedBookList;
+                                bookList = (List<Book>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                                currentPage = Integer.parseInt(data[2].toString());
+                            }
+                            choice = -1; // Update choice to continue the loop
+                        } else {
+                            choice = -1;
                         }
-                        choice = -1; // Update choice to continue the loop
                     } else if (input.matches("[0-9]+")) {
                         int selectedBookId = Integer.parseInt(input);
                         if (selectedBookId == 0) {
@@ -311,27 +319,35 @@ public class CreateTransactionView {
                     choice = 0;
                 } else {
                     if (input.equalsIgnoreCase("q")) {
-                        // Go to the previous page
-                        currentPage--;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
-                            currentPage = Integer.parseInt(data[2].toString());
+                        if (currentPage > 1) {
+                            // Go to the previous page
+                            currentPage--;
+                            pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedBookList instanceof Object[]) {
+                                data = (Object[]) pagedBookList;
+                                bookList = (List<Book>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                                currentPage = Integer.parseInt(data[2].toString());
+                            }
+                            choice = -1; // Update choice to continue the loop
+                        } else {
+                            choice = -1;
                         }
-                        choice = -1; // Update choice to continue the loop
                     } else if (input.equalsIgnoreCase("e")) {
-                        // Go to the next page
-                        currentPage++;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
-                            currentPage = Integer.parseInt(data[2].toString());
+                        if (currentPage < totalPages) {
+                            // Go to the next page
+                            currentPage++;
+                            pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedBookList instanceof Object[]) {
+                                data = (Object[]) pagedBookList;
+                                bookList = (List<Book>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                                currentPage = Integer.parseInt(data[2].toString());
+                            }
+                            choice = -1; // Update choice to continue the loop
+                        } else {
+                            choice = -1;
                         }
-                        choice = -1; // Update choice to continue the loop
                     } else if (input.matches("[0-9]+")) {
                         int selectedBookId = Integer.parseInt(input);
                         if (selectedBookId == 0) {

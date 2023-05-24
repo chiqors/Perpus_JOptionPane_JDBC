@@ -40,13 +40,13 @@ public class DisplayTransactionView {
                     transactionData.append(String.format("%s", transaction.toString()));
                 }
                 content += transactionData+"\n";
+                content += "\nMenu:\n";
                 if (currentPage > 1) {
                     content += "Q. Hal Sebelumnya\n";
                 }
                 if (currentPage < totalPages) {
                     content += "E. Hal Berikutnya\n";
                 }
-                content += "\nMenu:\n";
                 content += "0. Kembali ke menu sebelumnya";
 
                 String input = JOptionPane.showInputDialog(null, title + content, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
@@ -56,25 +56,39 @@ public class DisplayTransactionView {
                     choice = 0;
                 } else {
                     if (input.equalsIgnoreCase("q")) {
-                        // Go to the previous page
-                        currentPage--;
-                        pagedTransactionList = transactionService.getPagedTransactionList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedTransactionList instanceof Object[]) {
-                            data = (Object[]) pagedTransactionList;
-                            transactionList = (List<Transaction>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
+                        // check if currentPage already at the first page
+                        if (currentPage > 1) {
+                            // Go to the previous page
+                            currentPage--;
+                            pagedTransactionList = transactionService.getPagedTransactionList(currentPage, 2);
+                            if (pagedTransactionList instanceof Object[]) {
+                                data = (Object[]) pagedTransactionList;
+                                transactionList = (List<Transaction>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                            }
+                            // Update the choice to continue the loop
+                            choice = 1;
+                        } else {
+                            // Update the choice to continue the loop
+                            choice = 1;
                         }
                     } else if (input.equalsIgnoreCase("e")) {
-                        // Go to the next page
-                        currentPage++;
-                        pagedTransactionList = transactionService.getPagedTransactionList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedTransactionList instanceof Object[]) {
-                            data = (Object[]) pagedTransactionList;
-                            transactionList = (List<Transaction>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
+                        // check if currentPage already at the last page
+                        if (currentPage < totalPages) {
+                            // Go to the next page
+                            currentPage++;
+                            pagedTransactionList = transactionService.getPagedTransactionList(currentPage, 2);
+                            if (pagedTransactionList instanceof Object[]) {
+                                data = (Object[]) pagedTransactionList;
+                                transactionList = (List<Transaction>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                            }
+                            // Update the choice to continue the loop
+                            choice = 1;
+                        } else {
+                            // Update the choice to continue the loop
+                            choice = 1;
                         }
-                        // Update the choice to continue the loop
-                        choice = 1;
                     } else if (input.equals("0")) {
                         // Go back to the previous menu
                         choice = 0;

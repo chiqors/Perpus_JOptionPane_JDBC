@@ -1,6 +1,8 @@
 package models;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class Book {
     private int id;
@@ -15,6 +17,26 @@ public class Book {
         str += "ID: " + id + "\n";
         str += "Name: " + name + "\n";
         return str;
+    }
+
+    public String menuListBooks() {
+        String str = "";
+        String year = getBookYear();
+        str += id + ". " + name + " (" + year + ")\n";
+        str += " " + " " + " " + " Oleh: " + author + "\n";
+        return str;
+    }
+
+    public String getBookYear() {
+        // convert published to Date
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = sdf.parse(published);
+            sdf = new SimpleDateFormat("yyyy");
+            return sdf.format(date);
+        } catch (ParseException e) {
+            return "Tidak diketahui";
+        }
     }
 
     public int getId() {

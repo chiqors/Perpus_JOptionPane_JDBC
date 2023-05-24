@@ -37,17 +37,17 @@ public class DisplayBookView {
                 StringBuilder bookData = new StringBuilder();
                 for (int i = 0; i < bookList.size(); i++) {
                     Book book = bookList.get(i);
-                    bookData.append(String.format("%d. %s\n", book.getId(), book.getName()));
+                    bookData.append(book.menuListBooks());
                 }
                 content += bookData + "\n";
+                content += "Pilih menu: \n";
                 if (currentPage > 1) {
                     content += "Q. Hal Sebelumnya\n";
                 }
                 if (currentPage < totalPages) {
                     content += "E. Hal Berikutnya\n";
                 }
-                content += "0. Kembali ke menu sebelumnya\n\n";
-                content += "Pilih menu: ";
+                content += "0. Kembali ke menu sebelumnya";
 
                 String input = JOptionPane.showInputDialog(null, title + content, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
 
@@ -56,28 +56,44 @@ public class DisplayBookView {
                     choice = 0;
                 } else {
                     if (input.equalsIgnoreCase("q")) {
-                        // Go to the previous page
-                        currentPage--;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
+                        if (currentPage > 1) {
+                            // Go to the previous page
+                            currentPage--;
+                            pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedBookList instanceof Object[]) {
+                                data = (Object[]) pagedBookList;
+                                bookList = (List<Book>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                            }
+                            // Update the choice to continue the loop
+                            choice = 1;
+                        } else {
+                            // Handle the case where the current page is the first page
+                            choice = 1;
                         }
                     } else if (input.equalsIgnoreCase("e")) {
-                        // Go to the next page
-                        currentPage++;
-                        pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedBookList instanceof Object[]) {
-                            data = (Object[]) pagedBookList;
-                            bookList = (List<Book>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
+                        if (currentPage < totalPages) {
+                            // Go to the next page
+                            currentPage++;
+                            pagedBookList = bookService.getPagedBookList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedBookList instanceof Object[]) {
+                                data = (Object[]) pagedBookList;
+                                bookList = (List<Book>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                            }
+                            // Update the choice to continue the loop
+                            choice = 1;
+                        } else {
+                            // Handle the case where the current page is the last page
+                            choice = 1;
                         }
-                        // Update the choice to continue the loop
-                        choice = 1;
                     } else if (input.equals("0")) {
                         // Go back to the previous menu
                         choice = 0;
+                    } else {
+                        // Handle the case where the input is not as expected
+                        JOptionPane.showMessageDialog(null, "Pilihan tidak valid!", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
+                        choice = 1;
                     }
                 }
             } while (choice != 0);

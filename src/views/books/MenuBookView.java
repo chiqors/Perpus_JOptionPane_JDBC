@@ -43,6 +43,9 @@ public class MenuBookView {
                     case 5:
                         new BookController().destroy();
                         break;
+                    default:
+                        JOptionPane.showMessageDialog(null, "Pilihan menu tidak valid!", "Error", JOptionPane.ERROR_MESSAGE);
+                        break;
                 }
             } else {
                 new MainMenu(); // Create a new MainMenu instance

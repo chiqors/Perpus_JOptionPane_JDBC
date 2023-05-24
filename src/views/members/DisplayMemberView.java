@@ -40,14 +40,14 @@ public class DisplayMemberView {
                     memberData.append(String.format("%d. %s\n", member.getId(), member.getName()));
                 }
                 content += memberData + "\n";
+                content += "Pilih menu: \n";
                 if (currentPage > 1) {
                     content += "q. Hal Sebelumnya\n";
                 }
                 if (currentPage < totalPages) {
                     content += "e. Hal Berikutnya\n";
                 }
-                content += "0. Kembali ke menu sebelumnya\n\n";
-                content += "Pilih menu: ";
+                content += "0. Kembali ke menu sebelumnya";
 
                 String input = JOptionPane.showInputDialog(null, title + content, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
 
@@ -56,28 +56,43 @@ public class DisplayMemberView {
                     choice = 0;
                 } else {
                     if (input.equalsIgnoreCase("q")) {
-                        // Go to the previous page
-                        currentPage--;
-                        pagedMemberList = bookService.getPagedMemberList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedMemberList instanceof Object[]) {
-                            data = (Object[]) pagedMemberList;
-                            memberList = (List<Member>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
+                        if (currentPage > 1) {
+                            // Go to the previous page
+                            currentPage--;
+                            pagedMemberList = bookService.getPagedMemberList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedMemberList instanceof Object[]) {
+                                data = (Object[]) pagedMemberList;
+                                memberList = (List<Member>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                            }
+                            // Update the choice to continue the loop
+                            choice = 1;
+                        } else {
+                            // Handle the case where the current page is the first page
+                            choice = 1;
                         }
                     } else if (input.equalsIgnoreCase("e")) {
-                        // Go to the next page
-                        currentPage++;
-                        pagedMemberList = bookService.getPagedMemberList(currentPage, Constant.PAGE_SIZE);
-                        if (pagedMemberList instanceof Object[]) {
-                            data = (Object[]) pagedMemberList;
-                            memberList = (List<Member>) data[0];
-                            totalPages = Integer.parseInt(data[1].toString());
+                        if (currentPage < totalPages) {
+                            // Go to the next page
+                            currentPage++;
+                            pagedMemberList = bookService.getPagedMemberList(currentPage, Constant.PAGE_SIZE);
+                            if (pagedMemberList instanceof Object[]) {
+                                data = (Object[]) pagedMemberList;
+                                memberList = (List<Member>) data[0];
+                                totalPages = Integer.parseInt(data[1].toString());
+                            }
+                            // Update the choice to continue the loop
+                            choice = 1;
+                        } else {
+                            // Handle the case where the current page is the last page
+                            choice = 1;
                         }
-                        // Update the choice to continue the loop
-                        choice = 1;
                     } else if (input.equals("0")) {
                         // Go back to the previous menu
                         choice = 0;
+                    } else {
+                        // Handle the case where the input is not as expected
+                        JOptionPane.showMessageDialog(null, "Input tidak valid", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } while (choice != 0);

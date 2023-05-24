@@ -4,7 +4,6 @@ import config.Constant;
 import controllers.BookController;
 import controllers.MemberController;
 import controllers.TransactionController;
-import views.books.MenuBookView;
 
 import javax.swing.*;
 
@@ -16,14 +15,21 @@ public class MainMenu {
             String menuData = "1. Pengelolaan Data Buku\n2. Registrasi Member\n3. Peminjaman Buku\n4. Pengembalian Buku\n5. Transaksi\n\n0. Keluar dari aplikasi";
             String menuChoice = "\n\nMasukkan pilihan menu:";
 
-            String menu = JOptionPane.showInputDialog(null, title + menuData + menuChoice, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
+            // String menu = JOptionPane.showInputDialog(null, title + menuData + menuChoice, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE);
+            // with custom icon
+            Object menuObj = JOptionPane.showInputDialog(null, title + menuData + menuChoice, Constant.APP_NAME, JOptionPane.QUESTION_MESSAGE, Constant.APP_ICON_IMG, null, null);
+            if (menuObj == null || menuObj.toString().equals("0")) {
+                System.exit(0);
+            }
+            String menu = menuObj.toString();
 
-            if (menu == null) {
+            if (menu == null || menu.equals("0")) {
                 System.exit(0);
             } else if (!menu.matches("[0-9]*")) {
                 JOptionPane.showMessageDialog(null, "Input harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
                 continue;
             }
+
             choice = Integer.parseInt(menu);
 
             switch (choice) {

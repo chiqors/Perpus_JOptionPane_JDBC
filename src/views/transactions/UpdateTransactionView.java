@@ -63,27 +63,29 @@ public class UpdateTransactionView {
                         choice = 0;
                     } else {
                         if (input.equalsIgnoreCase("q")) {
-                            // Return to previous page
-                            currentPage--;
-                            pagedBorrowedTransactionList = transactionService.getPagedBorrowedTransactionList(currentPage, 3);
-                            if (pagedBorrowedTransactionList instanceof Object[]) {
-                                data = (Object[]) pagedBorrowedTransactionList;
-                                borrowedTransactionList = (List<Transaction>) data[0];
-                                totalPages = Integer.parseInt(data[1].toString());
-                                currentPage = Integer.parseInt(data[2].toString());
+                            if (currentPage > 1) {
+                                currentPage--;
+                                pagedBorrowedTransactionList = transactionService.getPagedBorrowedTransactionList(currentPage, 3);
+                                if (pagedBorrowedTransactionList instanceof Object[]) {
+                                    data = (Object[]) pagedBorrowedTransactionList;
+                                    borrowedTransactionList = (List<Transaction>) data[0];
+                                    totalPages = Integer.parseInt(data[1].toString());
+                                    currentPage = Integer.parseInt(data[2].toString());
+                                }
+                                choice = -1; // Update choice to continue the loop
                             }
-                            choice = -1; // Update choice to continue the loop
                         } else if (input.equalsIgnoreCase("e")) {
-                            // Go to next page
-                            currentPage++;
-                            pagedBorrowedTransactionList = transactionService.getPagedBorrowedTransactionList(currentPage, 3);
-                            if (pagedBorrowedTransactionList instanceof Object[]) {
-                                data = (Object[]) pagedBorrowedTransactionList;
-                                borrowedTransactionList = (List<Transaction>) data[0];
-                                totalPages = Integer.parseInt(data[1].toString());
-                                currentPage = Integer.parseInt(data[2].toString());
+                            if (currentPage < totalPages) {
+                                currentPage++;
+                                pagedBorrowedTransactionList = transactionService.getPagedBorrowedTransactionList(currentPage, 3);
+                                if (pagedBorrowedTransactionList instanceof Object[]) {
+                                    data = (Object[]) pagedBorrowedTransactionList;
+                                    borrowedTransactionList = (List<Transaction>) data[0];
+                                    totalPages = Integer.parseInt(data[1].toString());
+                                    currentPage = Integer.parseInt(data[2].toString());
+                                }
+                                choice = -1; // Update choice to continue the loop
                             }
-                            choice = -1; // Update choice to continue the loop
                         } else if (input.matches("[0-9]+")) {
                             int selectedTransactionId = Integer.parseInt(input);
                             if (selectedTransactionId == 0) {

@@ -77,52 +77,6 @@ public class BookRepository {
         return bookList;
     }
 
-    // getPagedBooksWithoutBlackListed: page, limit, blacklistBooksId
-    // SELECT * FROM books WHERE id NOT IN (1, 2, 3) LIMIT 10 OFFSET 0
-    public List<Book> getPagedBooksWithoutBlackListed(int page, int limit, List<Integer> blacklistBooksId) {
-        List<Book> bookList = new ArrayList<>();
-
-        try (Connection connection = DBConnection.getDataSource().getConnection()) {
-            String query = "SELECT * FROM books WHERE id NOT IN (";
-            for (int i = 0; i < blacklistBooksId.size(); i++) {
-                query += "?";
-                if (i < blacklistBooksId.size() - 1) {
-                    query += ", ";
-                }
-            }
-            query += ") LIMIT ? OFFSET ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            for (int i = 0; i < blacklistBooksId.size(); i++) {
-                statement.setInt(i + 1, blacklistBooksId.get(i));
-            }
-            statement.setInt(blacklistBooksId.size() + 1, limit);
-            statement.setInt(blacklistBooksId.size() + 2, (page - 1) * limit);
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String author = resultSet.getString("author");
-                String published = resultSet.getString("published");
-                int stock = resultSet.getInt("stock");
-
-                Book book = new Book();
-                book.setId(id);
-                book.setName(name);
-                book.setAuthor(author);
-                book.setPublished(published);
-                book.setStock(stock);
-                bookList.add(book);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle any potential exceptions here
-            JOptionPane.showMessageDialog(null, "Failed to load book data.", Constant.APP_NAME, JOptionPane.ERROR_MESSAGE);
-        }
-
-        return bookList;
-    }
-
     public int getTotalBooks() {
         int count = 0;
 
@@ -147,7 +101,7 @@ public class BookRepository {
         List<Book> searchResults = new ArrayList<>();
 
         try (Connection connection = DBConnection.getDataSource().getConnection()) {
-            String query = "SELECT * FROM books WHERE LOWER(name) LIKE LOWER(?)";
+            String query = "SELECT * FROM books WHERE LOWER(name) LIKE LOWER(?) ORDER BY id ASC";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, "%" + bookName + "%");
 
